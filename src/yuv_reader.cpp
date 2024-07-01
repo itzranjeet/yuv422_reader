@@ -1,4 +1,5 @@
-#include </home/smartap/yuv422_reader-main/include/yuv_reader.hpp>
+#include "/home/kpit/ranjeetp1/YUV_422_Reader/include/yuv_reader.hpp"
+
 void YUVREADER::readYUV()
 {
     std::ifstream is(in_yuv_file, std::ifstream::binary);
@@ -86,7 +87,6 @@ void YUVREADER::writeYUV()
             std::stringstream str;
             str << val;
             str >> std::hex >> value;
-            // char ch = static_cast<char>(value);
             op_yuv << static_cast<char>(value);
             count++;
         }
@@ -98,6 +98,7 @@ void YUVREADER::writeYUV()
 
 void YUVREADER::uyvyToRGBA8888(unsigned char *uyvyData, unsigned char *rgbaData, int width, int height)
 {
+    FILE *fp = fopen("rgba.png", "wb");
     int rgba_index = 0;
     for (int i = 0; i < width * height * 4 * 3; i += 4)
     {
@@ -121,18 +122,9 @@ void YUVREADER::uyvyToRGBA8888(unsigned char *uyvyData, unsigned char *rgbaData,
         rgbaData[rgba_index++] = std::max(0, std::min(255, (298 * c + 516 * d + 128) >> 8));           // B
         rgbaData[rgba_index++] = 255;                                                                  // A
     }
-    std::cout << rgba_index << std::endl;
-
-    // cv::Mat save_img;
-    // rgbaData >> save_img;
-
-    // if (save_img.empty())
-    // {
-    //     std::cerr << "Something is wrong with the webcam, could not get frame." << std::endl;
-    // }
-    // cv::imwrite("test.png", save_img);
+    svpng(fp, 176, 144, rgbaData, 1);
+    fclose(fp);
 }
-
 
 int main()
 {
